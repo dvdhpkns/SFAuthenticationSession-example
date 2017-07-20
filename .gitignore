@@ -1,0 +1,11 @@
+# ios
+build/
+
+# python
+env/
+__pycache__/
+*.py[cod]
+.Python
+
+# pycharm
+.idea/
