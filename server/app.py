@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, redirect
 from haikunator import Haikunator
+import datetime
 
 app = Flask(__name__)
 
@@ -17,7 +18,11 @@ def set_cookie(cookie_key):
     rsp_text = 'Cookie "' + cookie_key + '" set to <b>' + cookie_val + '</b>'
     rsp_text += get_endpoints_description(cookie_key)
     response = app.make_response(rsp_text)
-    response.set_cookie(cookie_key, value=cookie_val)
+    # set the cookie with an expirty date / "max-age" / "expires" param per this SO answer
+    # https://stackoverflow.com/questions/46569570/sfauthenticationsession-isnt-sharing-cookies-on-the-real-devices
+    expire_date = datetime.datetime.now()
+    expire_date = expire_date + datetime.timedelta(days=90)
+    response.set_cookie(cookie_key, value=cookie_val, expires=expire_date)
     return response
 
 
@@ -36,7 +41,8 @@ def get_cookie(cookie_key):
     callback_url = request.args.get("callbackUrl", None)
     if callback_url:
         redirect_url = callback_url + "?" + cookie_key + "=" + str(cookie_val)
-        print("Redirecting to " + redirect_url)
+        print "Redirecting to:"
+        print redirect_url
         return redirect(redirect_url)
     else:
         rsp_text = 'Cookie "' + cookie_key + '" is ' + ('<b>' + cookie_val + '</b>' if cookie_val else 'not set')
@@ -51,8 +57,8 @@ def get_endpoints_description(key):
     get_text += ' - gets cookie val for "' + key + '" with optional query param "callbackUrl" to be redirected to with cookie appended as query param'
     delete_text = '<a href="/delete-cookie/' + key + '">/delete-cookie/' + key + '</a>'
     delete_text += ' - expires cookie for "' + key + '"'
-    return '<ul><li>' + create_text + '</li><li>' + get_text + '</li><li>' + delete_text + '</li></ul>'
-
+    print_cookies = '<script>document.getElementsByTagName("p")[0].append(document.createElement("div").innerHTML = document.cookie)</script>'
+    return '<ul><li>' + create_text + '</li><li>' + get_text + '</li><li>' + delete_text + '</li></ul><h3>Current cookies set are:</h3><p>' + print_cookies + '</p>'
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
