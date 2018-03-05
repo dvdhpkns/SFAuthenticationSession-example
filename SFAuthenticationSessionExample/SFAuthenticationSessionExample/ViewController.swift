@@ -19,10 +19,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var cookieLabel: UILabel!
     var authSession: SFAuthenticationSession?
 
+    let cookiename = "expiry-fix-test"
+
     @IBAction func getUserAuth(_ sender: Any) {
-        
+
         let callbackUrl  = "SFAuthenticationSessionExample://"
-        let authURL = "http://0.0.0.0:5000/get-cookie/user?callbackUrl=" + callbackUrl
+        let authURL = "http://0.0.0.0:5000/get-cookie/" + cookiename + "?callbackUrl=" + callbackUrl
         //Initialize auth session
         self.authSession = SFAuthenticationSession(url: URL(string: authURL)!, callbackURLScheme: callbackUrl, completionHandler: { (callBack:URL?, error:Error? ) in
             guard error == nil, let successURL = callBack else {
@@ -30,11 +32,10 @@ class ViewController: UIViewController {
                 self.cookieLabel.text = "Error retrieving cookie"
                 return
             }
-            let user = getQueryStringParameter(url: (successURL.absoluteString), param: "user")
-            self.cookieLabel.text = (user == "None") ? "user cookie not set" : "User: " + user!
+            let cookievalue = getQueryStringParameter(url: (successURL.absoluteString), param: self.cookiename)
+            self.cookieLabel.text = (cookievalue == "None") ? "cookie not set" : "Cookie for key " + self.cookiename + ": " + cookievalue!
         })
         cookieLabel.text = "Starting SFAuthenticationSession..."
         self.authSession?.start()
     }
 }
-
