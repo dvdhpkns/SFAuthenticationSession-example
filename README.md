@@ -44,5 +44,6 @@ Xcode 9 and iOS 11 are required to run the app. To attempt fetching cookies from
 2. From the simulator exit the app by pressing the home button and go to safari.
 3. Go to http://0.0.0.0:5000/create-cookie/expiry-fix-test to create a cookie for the key "expiry-fix-test". Update the value of `cookiename` to use a different key / value pair.
 4. Go back to the app in the simulator and click the "Get cookie from Safari" button.
-5. You will see a dialogue like the following: ![SFAuthenticationSession dialogue screenshot](screenshot.png)
+5. You will see a dialogue like the following: 
+![SFAuthenticationSession dialogue screenshot](screenshot.png)
 6. Click continue; a SafariViewController will be launched and then you should be redirected back into your app with the cookie for "expiry-fix-test" shown in the app.
